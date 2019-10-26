@@ -1,3 +1,4 @@
+# MODIFIED 10/26/2019: Removed erroneous LDFLAG -lmpfi
 
 # CC = /opt/local/bin/gcc-mp-4.6
 CC = gcc -std=c99
@@ -20,7 +21,7 @@ CFLAGS = -c -g -Wall -Wshadow -Wpointer-arith -Wwrite-strings
 CFLAGS += $(INC_PATHS)
 
 DEBUG = -g
-LDFLAGS = -Wall $(DEBUG) $(LIB_PATHS) -lm -lgmp  -lmpfr -lmpfi
+LDFLAGS = -Wall $(DEBUG) $(LIB_PATHS) -lm -lgmp  -lmpfr #-lmpfi
 
 LIB_H=info.h interval.h poly_ops.h utils.h sys_queue.h vca_solver_1.h 	
 LIB_SRC=info.c interval.c poly_ops.c vca_solver_1.c 	
