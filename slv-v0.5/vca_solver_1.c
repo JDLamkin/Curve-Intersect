@@ -16,6 +16,12 @@
   If interested by a copy of the GNU Lesser General Public License, write to
   the Free Software Foundation, Inc., 51 Franklin Place, Fifth Floor, Boston,
   MA 02110-1301, USA. 
+
+===============================================================================
+
+  MODIFIED 10/26/2019:
+  Commented out remaining debug flags indicating completion of root isolation.
+
 =============================================================================*/
 
 
@@ -341,7 +347,7 @@ VCA(mpz_t* A, unsigned long dg, slv_info_ptr info, int algo)
     
     SLV_POLY_CLEAR(F, dg, j); 
 
-	printf( "Finish isolating \n");
+	//printf( "Finish isolating \n");
 	return vec_bintvl;
 }
 
@@ -634,7 +640,7 @@ VCA_all(mpz_t* A, unsigned long dg, slv_info_ptr info_pos, slv_info_ptr info_neg
     }   
 
         
-	printf( "Finish isolating \n");
+	//printf( "Finish isolating \n");
 	return roots;
 }
 
