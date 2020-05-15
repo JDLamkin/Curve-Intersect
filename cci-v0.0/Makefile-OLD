@@ -1,0 +1,79 @@
+
+# CC = /opt/local/bin/gcc-mp-4.6
+CC = gcc -std=c99
+CC = gcc -std=c99 -O3 -Wgnu -Wall -pedantic -funroll-loops -fomit-frame-pointer -fexpensive-optimizations  
+CC = gcc -std=c99 -O3 -DNDEBUG  -Wall -Winline  -funroll-loops    
+
+CPP = g++ -std=c++17 -O3 -DNDEBUG  -Wall -Winline  -funroll-loops
+
+RM = rm -rf
+
+
+GMP_INC_DIR=.
+GMP_LIB_DIR=.
+
+LIB_PATHS = -L/opt/local/lib/ -L/usr/local/lib -L/Users/elias/local/lib -L$(GMP_LIB_DIR)
+INC_PATHS = -I/opt/local/include -I/Users/elias/local/include -I/usr/local/include -I$(GMP_INC_DIR)
+
+#CFLAGS = -O3 -Wall -ansi -pedantic -funroll-loops -fomit-frame-pointer -fexpensive-optimizations  
+CFLAGS = -c -g -Wall -Wshadow -Wpointer-arith -Wwrite-strings
+#-Wpedantic 
+
+CFLAGS += $(INC_PATHS)
+
+DEBUG = -g
+LDFLAGS = -Wall $(DEBUG) $(LIB_PATHS) -lm -lgmp  -lmpfr #-lmpfi
+
+SLV_LIB_H=info.h interval.h poly_ops.h utils.h sys_queue.h vca_solver_1.h 	
+SLV_LIB_SRC=info.c interval.c poly_ops.c vca_solver_1.c 	
+CCI_LIB_H=slvpp.h isolPnt.h polynom.h poly2.h utils.h rational.h
+CCI_LIB_SRC=slvpp.cpp isolPnt.cpp polynom.cpp poly2.cpp
+
+LIB_H=$(patsubst %,../slv-v0.5/%,$(SLV_LIB_H)) $(CCI_LIB_H)
+LIB_SRC=$(patsubst %,../slv-v0.5/%,$(SLV_LIB_SRC)) $(CCI_LIB_SRC)
+
+SLV_LIB_OBJS=$(patsubst %.c,%.o,$(SLV_LIB_SRC))
+
+
+all: cci
+
+vca_solver_2.o: vca_solver_2.h  vca_solver_2.c vca_solver_1.h vca_solver_1.c  interval.h interval.c dbg.h
+	$(CC) $(CFLAGS) vca_solver_2.c
+
+vca_solver_1.o: vca_solver_1.h vca_solver_1.c  interval.h interval.c dbg.h
+	$(CC) $(CFLAGS) vca_solver_1.c
+
+poly_ops.o: poly_ops.h poly_ops.c interval.h interval.c dbg.h
+	$(CC) $(CFLAGS) poly_ops.c
+
+
+interval.o : interval.h interval.c dbg.h
+	$(CC) $(CFLAGS) interval.c
+
+
+.PHONY: clean all
+
+clean:
+	$(RM) -rf cci *.o *~
+LIB_H   = info.h interval.h poly_ops.h utils.h sys_queue.h vca_solver_1.h
+LIB_C   = info.c interval.c poly_ops.c vca_solver_1.c
+LIB_HPP = slvpp.h polynom.h poly2.h isolPnt.h cppUtils.h rational.h
+LIB_CPP = slvpp.cpp polynom.cpp poly2.cpp isolPnt.cpp
+
+LIB_OBJ = $(patsubst %.c,%.obj,$(LIB_C))
+LIB_OPP = $(patsubst %.cpp,%.o,$(LIB_CPP))
+
+.PHONY: clean all
+
+
+all: cci
+
+clean:
+	$(RM) cci *.o
+	cd ../slv-v0.5; make clean
+
+cci: cppTest.o $(LIB_OBJ) $(LIB_OPP)
+	$(CPP) $^ -o $@ $(LDFLAGS) -lgmpxx
+
+%.o: %.cpp $(LIB_H) $(LIB_HPP)
+	$(CPP) $(CFLAGS) $< -o $@
